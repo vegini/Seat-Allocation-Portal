@@ -1,0 +1,737 @@
+/**
+ *This is a summary statement.
+ *@Author w!nxx!
+ */
+
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
+import java.util.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+
+
+
+public class GaleShapley{
+
+		ArrayList<Candidate> candidates = new ArrayList<Candidate>();
+
+		ArrayList<VirtualProgramme> Programmes = new ArrayList<VirtualProgramme>();
+		ArrayList<VirtualProgramme> Institutes = new ArrayList<VirtualProgramme>();
+
+		Meritlist ge_meritlist = new Meritlist();
+		Meritlist obc_meritlist = new Meritlist();
+		Meritlist sc_meritlist = new Meritlist();
+		Meritlist st_meritlist = new Meritlist();
+
+		Meritlist ge_pd = new Meritlist();
+		Meritlist obc_pd = new Meritlist();
+		Meritlist sc_pd = new Meritlist();
+		Meritlist st_pd = new Meritlist();
+		Meritlist ds_meritlist = new Meritlist();
+		Meritlist foreign = new Meritlist();
+
+
+	public GaleShapley(){
+		
+        
+        try
+        {
+        	Scanner sc = new Scanner(new File("/Users/apple/Downloads/input1/2/choices.csv")) ;
+         	
+
+         	String s = sc.nextLine();
+        
+        while(sc.hasNextLine())
+        {           
+            s = sc.nextLine();
+            Scanner scan = new Scanner(s);
+            scan.useDelimiter(",");
+
+            while(scan.hasNext())
+            {
+                String st = scan.next();
+                Candidate c1 = new Candidate(st);
+                st = scan.next();
+                c1.set_category(st);
+                st = scan.next();
+                c1.set_pdstatus(st);
+                candidates.add(c1);
+                st = scan.next();                
+            }            
+        }
+
+
+
+        } catch (IOException e)
+			{
+				System.out.println(e);
+				
+			}
+
+       
+	//System.out.println(candidates.size());
+	try{	
+
+		
+		Scanner scan = new Scanner (new File("/Users/apple/Downloads/input1/2/ranklist.csv"));
+		String row = scan.nextLine();
+		int i = 0;
+		while (scan.hasNext())
+		{
+		
+			row = scan.nextLine();
+			
+
+			Scanner sc20 = new Scanner(row);
+			sc20.useDelimiter(",");
+		       
+			String id = sc20.next();
+			sc20.next();
+			sc20.next();
+
+			int ge_rank = sc20.nextInt();
+			//System.out.println(row+" "+ge_rank);
+			int obc_rank = sc20.nextInt();
+			int sc_rank = sc20.nextInt();
+			int st_rank = sc20.nextInt();
+
+			//System.out.println(ge_rank);
+			//System.out.println(obc_rank);
+
+			sc20.next();
+
+			int ge_pd_rank = sc20.nextInt();
+			int obc_pd_rank = sc20.nextInt();
+			int sc_pd_rank = sc20.nextInt();
+			int st_pd_rank = sc20.nextInt();
+
+			if (candidates.get(i).get_ds_eligibility()==true) 
+			{
+				ds_meritlist.add(candidates.get(i),ge_rank);
+				ge_meritlist.add(candidates.get(i),ge_rank);
+			}
+
+			else if (candidates.get(i).get_nationality()==false)
+			{
+				foreign.add(candidates.get(i),ge_rank);
+			}
+
+		else{
+
+			if (ge_rank!=0) ge_meritlist.add(candidates.get(i),ge_rank);
+
+			if(obc_rank!=0) obc_meritlist.add(candidates.get(i), obc_rank);
+			else if(sc_rank!=0) sc_meritlist.add(candidates.get(i), sc_rank);
+			else if(st_rank!=0) st_meritlist.add(candidates.get(i), st_rank);
+
+			if (ge_pd_rank!=0) ge_pd.add(candidates.get(i),ge_pd_rank);
+
+			if(obc_pd_rank!=0) obc_pd.add(candidates.get(i), obc_pd_rank);
+			else if(sc_pd_rank!=0) sc_pd.add(candidates.get(i),sc_pd_rank);
+			else if(st_pd_rank!=0) st_pd.add(candidates.get(i),st_pd_rank);
+
+		}
+
+		i++;
+
+	}
+			
+			
+
+	} catch (IOException e)
+		{
+			System.out.println(e);
+			System.out.println("hi");
+		}	
+	 
+		
+	try{
+		
+		Scanner s10 = new Scanner(new File("/Users/apple/Downloads/input1/2/programs.csv"));
+		
+		String row2 = s10.nextLine();
+		while(s10.hasNext())
+		{
+			row2 = s10.nextLine();
+			Scanner s1 = new Scanner(row2);
+			s1.useDelimiter(",");
+			String code = s1.next();
+			code = s1.next();
+			String name = s1.next();
+
+			int ge_quota = s1.nextInt();
+			int obc_quota = s1.nextInt();
+			int sc_quota = s1.nextInt();
+			int st_quota = s1.nextInt();
+
+			int ge_pd_quota = s1.nextInt();
+			int obc_pd_quota = s1.nextInt();
+			int sc_pd_quota = s1.nextInt();
+			int st_pd_quota = s1.nextInt();
+
+			VirtualProgramme prog = new VirtualProgramme();
+			prog.set_category(name,code,"GE");
+			prog.set_quota(ge_quota);
+			prog.set_pd_status("N");
+			prog.set_meritlist(ge_meritlist);
+			prog.set_foreign_meritlist(foreign);
+			Programmes.add(prog);
+
+			VirtualProgramme prog1 = new VirtualProgramme();
+			prog1.set_category(name,code,"OBC");
+			prog1.set_quota(obc_quota);
+			prog1.set_pd_status("N");
+			prog1.set_meritlist(obc_meritlist);
+			Programmes.add(prog1);
+
+			VirtualProgramme prog2 = new VirtualProgramme();
+			prog2.set_category(name,code,"SC");
+			prog2.set_quota(sc_quota);
+			prog2.set_pd_status("N");
+			prog2.set_meritlist(sc_meritlist);
+			Programmes.add(prog2);
+
+			VirtualProgramme prog3 = new VirtualProgramme();
+			prog3.set_category(name,code,"ST");
+			prog3.set_quota(st_quota);
+			prog3.set_pd_status("N");
+			prog3.set_meritlist(st_meritlist);
+			Programmes.add(prog3);
+
+			VirtualProgramme prog4 = new VirtualProgramme();
+			prog4.set_category(name,code,"GE");
+			prog4.set_quota(ge_pd_quota);
+			prog4.set_pd_status("Y");
+			prog4.set_meritlist(ge_pd);
+			Programmes.add(prog4);
+
+			VirtualProgramme prog5 = new VirtualProgramme();
+			prog5.set_category(name,code,"OBC");
+			prog5.set_quota(obc_pd_quota);
+			prog5.set_pd_status("Y");
+			prog5.set_meritlist(obc_pd);
+			Programmes.add(prog5);
+
+			VirtualProgramme prog6 = new VirtualProgramme();
+			prog6.set_category(name,code,"SC");
+			prog6.set_quota(sc_pd_quota);
+			prog6.set_pd_status("Y");
+			prog6.set_meritlist(sc_pd);
+			Programmes.add(prog6);
+
+			VirtualProgramme prog7 = new VirtualProgramme();
+			prog7.set_category(name,code,"ST");
+			prog7.set_quota(st_pd_quota);
+			prog7.set_pd_status("Y");
+			prog7.set_meritlist(st_pd);
+			Programmes.add(prog7);
+
+
+		Scanner ds = new Scanner(code);
+		ds.useDelimiter("");
+
+		String insti_code = ds.next();
+
+		if (Institutes.size()==0)
+		{
+			VirtualProgramme ds_list = new VirtualProgramme();
+			ds_list.set_category(insti_code, code, "DS");
+			ds_list.set_quota(2);
+			ds_list.set_pd_status("N");
+			ds_list.set_meritlist(ds_meritlist);
+			Institutes.add(ds_list);
+		}
+
+		else
+		{
+			Iterator<VirtualProgramme> itr = Institutes.iterator();
+			boolean present = false;
+			while(itr.hasNext())
+			{
+				if(itr.next().get_name().equals(insti_code)) present = true;
+			}
+
+			if (present==false)
+			{
+				VirtualProgramme ds_list = new VirtualProgramme();
+				ds_list.set_category(insti_code, code, "DS");
+				ds_list.set_quota(2);
+				ds_list.set_pd_status("N");
+				ds_list.set_meritlist(ds_meritlist);
+				Institutes.add(ds_list);
+			}
+		}
+
+
+	}
+
+		//System.out.println(Institutes.size());
+	} catch (IOException e)
+		{
+			System.out.println(e);
+			System.out.println("hi");
+		}
+
+	try{
+		
+	Scanner s7 = new Scanner(new File("/Users/apple/Downloads/input1/2/choices.csv"));
+	s7.nextLine();
+	int i = -1;
+	while(s7.hasNextLine())
+	{
+		i++;
+		//System.out.println(i);
+		String row1 = s7.nextLine();
+		Scanner s1 = new Scanner(row1);
+		s1.useDelimiter(",");
+		String id = s1.next();
+		String cat = s1.next();
+		String pd_status = s1.next();
+		String choices = s1.next();
+
+		Scanner s2 = new Scanner(choices);
+		s2.useDelimiter("_");
+
+		while(s2.hasNext())
+		{
+			String choice = s2.next();
+			//if (i==7) System.out.println(choice);
+			ListIterator<VirtualProgramme> iter = Programmes.listIterator();
+			while(iter.hasNext())
+			{
+				if (iter.next().get_code().equals(choice)) break;
+			}
+
+
+			if (candidates.get(i).get_category().equals("F"))
+			{
+				iter.previous();
+				candidates.get(i).add_preference(iter.next());
+				//if (i==7) System.out.println(choice);
+				
+			}
+
+
+
+			if (candidates.get(i).get_category().equals("DS"))
+			{
+				Scanner rt = new Scanner(choice);
+				rt.useDelimiter("");
+				String cod = rt.next();
+
+				ListIterator<VirtualProgramme> itr = Institutes.listIterator();
+				boolean present = false;
+				while(itr.hasNext())
+				{
+					if(itr.next().get_name().equals(cod)) 
+					{
+						present = true;
+						itr.previous();                                                                    
+						candidates.get(i).add_preference(itr.next());
+					}
+				}
+				iter.previous();
+					candidates.get(i).add_preference(iter.next());				
+			}
+
+			
+			if (candidates.get(i).get_pd_status()==false)
+			{	
+				if (candidates.get(i).get_category().equals("GE"))
+				{
+					iter.previous();
+					candidates.get(i).add_preference(iter.next());
+					candidates.get(i).add_preference(iter.next());
+					iter.next();
+					iter.next();
+					candidates.get(i).add_preference(iter.next());
+					candidates.get(i).add_preference(iter.next());
+
+
+				}
+
+				if (candidates.get(i).get_category().equals("OBC"))
+				{
+					iter.previous();
+					candidates.get(i).add_preference(iter.next());
+					
+					candidates.get(i).add_preference(iter.next());
+					
+					iter.next();
+					iter.next();
+					candidates.get(i).add_preference(iter.next());
+					candidates.get(i).add_preference(iter.next());
+				
+
+				}
+
+				if (candidates.get(i).get_category().equals("SC"))
+				{
+					iter.previous();
+					candidates.get(i).add_preference(iter.next());
+					iter.next();
+					candidates.get(i).add_preference(iter.next());
+					candidates.get(i).add_preference(iter.previous());
+					iter.next();
+					iter.next();
+					candidates.get(i).add_preference(iter.next());
+					candidates.get(i).add_preference(iter.next());
+					candidates.get(i).add_preference(iter.next());
+
+				}
+
+				if (candidates.get(i).get_category().equals("ST"))
+				{
+					iter.previous();
+					candidates.get(i).add_preference(iter.next());
+					iter.next();
+					iter.next();
+					candidates.get(i).add_preference(iter.next());
+					iter.previous();
+
+					candidates.get(i).add_preference(iter.previous());
+					//candidates.get(i).add_preference(iter.previous());
+					iter.next();
+					iter.next();
+					candidates.get(i).add_preference(iter.next());
+					candidates.get(i).add_preference(iter.next());
+					candidates.get(i).add_preference(iter.next());
+				}
+			}	
+
+			else
+			{
+				if (candidates.get(i).get_category().equals("GE"))
+				{
+					iter.previous();
+					candidates.get(i).add_preference(iter.next());
+					iter.next();
+					iter.next();
+					iter.next();
+					candidates.get(i).add_preference(iter.next());
+					iter.previous();
+					iter.previous();
+
+					candidates.get(i).add_preference(iter.previous());
+					iter.next();
+					iter.next();
+					iter.next();
+					candidates.get(i).add_preference(iter.next());
+
+
+				}
+
+				if (candidates.get(i).get_category().equals("OBC"))
+				{
+					iter.previous();
+					candidates.get(i).add_preference(iter.next());
+					
+					iter.next();
+					iter.next();
+					iter.next();
+					candidates.get(i).add_preference(iter.next());
+					iter.previous();
+					iter.previous();
+
+					candidates.get(i).add_preference(iter.previous());
+					iter.next();
+					iter.next();
+					iter.next();
+					candidates.get(i).add_preference(iter.next());
+
+				}
+
+				if (candidates.get(i).get_category().equals("SC"))
+				{
+					iter.previous();
+					candidates.get(i).add_preference(iter.next());
+					iter.next();
+					candidates.get(i).add_preference(iter.next());
+					//candidates.get(i).add_preference(iter.previous());
+					iter.next();
+					candidates.get(i).add_preference(iter.next());
+					iter.next();
+				
+					candidates.get(i).add_preference(iter.next());
+					iter.previous();
+					iter.previous();
+					iter.previous();
+					iter.previous();
+					candidates.get(i).add_preference(iter.previous());
+					iter.next();
+					iter.next();
+					iter.next();
+					candidates.get(i).add_preference(iter.previous());
+
+				}
+
+				if (candidates.get(i).get_category().equals("ST"))
+				{
+					iter.previous();
+					candidates.get(i).add_preference(iter.next());
+					iter.next();
+					iter.next();
+					candidates.get(i).add_preference(iter.next());
+					candidates.get(i).add_preference(iter.next());
+					//iter.previous();
+
+					//candidates.get(i).add_preference(iter.previous());
+					//candidates.get(i).add_preference(iter.previous());
+					iter.next();
+					iter.next();
+					candidates.get(i).add_preference(iter.next());
+					iter.previous();
+					iter.previous();
+					iter.previous();
+					iter.previous();
+					iter.previous();
+
+					candidates.get(i).add_preference(iter.previous());
+					iter.next();
+					iter.next();
+					iter.next();
+					candidates.get(i).add_preference(iter.next());
+				}
+			}
+
+			
+
+		}
+
+		
+	}
+	} catch(IOException e)
+		{
+			System.out.println(e);
+			System.out.println("hi");
+		}
+	}
+	
+	public void algo()
+
+	{	
+	
+	//System.out.println(candidates.get(1).next_apply().get_category());
+	while(!terminate())
+	{
+		for(int i1=0;i1<candidates.size();i1++)
+		{
+			
+			if (candidates.get(i1).waitlist_index()==-1) 
+			{
+			   if (candidates.get(i1).get_nationality()!=false)
+			   {
+				
+				
+				
+				if(candidates.get(i1).next()!=-1) 
+				{
+					 candidates.get(i1).apply();			
+					candidates.get(i1).next_apply().apply(candidates.get(i1));
+					
+				}
+			   }
+			}
+		}
+
+		for(int j=0;j<Institutes.size();j++)
+		{
+			Institutes.get(j).filter();
+			
+		}
+
+		for(int k=0;k<Programmes.size();k++)
+		{
+			
+			//System.out.println(Programmes.get(k).get_category());
+			//System.out.println(Programmes.get(k).get_quota());
+			Programmes.get(k).filter();
+
+
+		}
+	}
+
+	if (terminate())
+	{
+	   while(!foreign_terminate())
+
+		for(int i1=0;i1<candidates.size();i1++)
+		{
+			
+			if (candidates.get(i1).waitlist_index()==-1) 
+			{
+			   if (candidates.get(i1).get_nationality()==false)
+			   {
+								
+				
+				if(candidates.get(i1).next()!=-1) 
+				{
+					candidates.get(i1).apply();
+
+					 //System.out.println(candidates.get(i1).get_id());					
+					candidates.get(i1).next_apply().apply_foreign(candidates.get(i1));
+					
+				}
+			   }
+			}
+		}
+
+		
+
+		for(int k=0;k<Programmes.size();k++)
+		{
+			Programmes.get(k).filter_foreign();
+		}
+	
+	}
+
+}	
+	
+	public void display()
+	{	
+
+	//System.out.println(candidates.get(7).preferences.size());
+	if (terminate() && foreign_terminate())
+	{
+		
+
+	try{
+
+		File file = new File("/Users/apple/Downloads/input1/2/output.csv");
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+
+			String content = "";
+		for(int u=0;u<candidates.size();u++)
+		{
+			//System.out.println(ge_meritlist.rank(candidates.get(u)));
+			if (candidates.get(u).waitlist_index()!=-1)
+			{
+					System.out.println(candidates.get(u).already());
+				 content = candidates.get(u).get_id()+","+candidates.get(u).preferences.get(candidates.get(u).waitlist_index()).get_code();
+				
+			}
+
+			else
+			{
+				content = candidates.get(u).get_id()+","+"-1";
+				
+			}
+
+			
+			bw.write(content);
+			bw.newLine();
+			
+		}
+		bw.close();
+	} catch (IOException e){
+			System.out.println(e);
+		}
+	}
+
+	}
+	
+
+	
+
+	public boolean terminate()
+	{
+		boolean res = false;
+
+		boolean waitlisted = true;
+
+		for(int h=0;h<candidates.size();h++)
+		{
+			if (candidates.get(h).waitlist_index()==-1 && candidates.get(h).get_nationality()!=false)
+			{
+				waitlisted = false;
+			}
+
+
+		}
+
+		if (waitlisted==true) res = true;
+		else
+		{
+				
+		for(int l=0;l<candidates.size();l++)
+		{
+			if (candidates.get(l).waitlist_index()==-1 && candidates.get(l).get_nationality()!=false) 
+			{
+				if (candidates.get(l).next()==-1) res = true;
+				else
+				{
+					res = false;
+					return res;
+				}
+			}
+			
+		}
+
+		}
+
+		return res;
+	}
+
+public boolean foreign_terminate()
+	{
+		boolean res = false;
+
+		boolean waitlisted = true;
+
+		for(int h=0;h<candidates.size();h++)
+		{
+			if (candidates.get(h).waitlist_index()==-1 && candidates.get(h).get_nationality()==false)
+			{
+				waitlisted = false;
+			}
+
+
+		}
+
+		if (waitlisted==true) res = true;
+		else
+		{
+				
+		for(int l=0;l<candidates.size();l++)
+		{
+			if (candidates.get(l).waitlist_index()==-1 && candidates.get(l).get_nationality()==false) 
+			{
+				if (candidates.get(l).next()==-1) res = true;
+				else
+				{
+					res = false;
+					return res;
+				}
+			}
+			
+		}
+
+		}
+
+		return res;
+	}
+
+
+	public static void main(String[] args)
+	{
+		GaleShapley a = new GaleShapley();
+		a.algo();
+		a.display();
+
+
+	}
+}
+
+
+	
+
+
+
+
